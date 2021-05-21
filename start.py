@@ -2,13 +2,12 @@ import json
 from pathlib import Path
 
 
-from setup import setup
-from vaccine_bot import initBot
+from setup import startSetup
+from bot import startBot
 from functions import cls
 
-def startProgram():
-    cls()
-    settings_file_name = "./settings.json"
+def startProgram(file, createFile):
+    settings_file_name = file
     settings_file_exists = Path(settings_file_name).is_file()
     if (settings_file_exists):
         try:
@@ -16,10 +15,11 @@ def startProgram():
             settings_params = json.load(settings_file)
             district_id = settings_params["district_id"]
         except:
-            setup(settings_file_name)
-            startProgram()
-        initBot(district_id)
+            startSetup(settings_file_name)
+            startProgram(settings_file_name, False)
+        startBot(district_id)
     else:
-        setup(settings_file_name)
-        startProgram()
-startProgram()
+        if(createFile):
+            startSetup(settings_file_name)
+        startProgram("/tmp/covid_bot_settings.json", True)
+startProgram("./settings.json", False)
