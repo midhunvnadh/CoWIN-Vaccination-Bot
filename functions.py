@@ -5,7 +5,6 @@ from datetime import timedelta
 from time import sleep
 import random
 import requests
-from requests.models import ChunkedEncodingError
 
 def cls():
     if os.name == 'posix':
