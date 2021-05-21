@@ -6,11 +6,11 @@ from time import sleep
 import datetime
 
 
-def get_response(date):
+def get_response(date, district_id):
 	date = str(date.strftime("%d-%m-%Y"))
 	sessions = requests.get(
         "https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/calendarByDistrict",
-        params={'district_id': 298, 'date': date},
+        params={'district_id': district_id, 'date': date},
         headers={
 			'User-Agent': getRandUserAgent(),
 			'sec-ch-ua': '" Not A;Brand";v="99", "Chromium";v="90", "Google Chrome";v="90"'
@@ -23,16 +23,16 @@ def get_response(date):
 		JSON_r = [403]
 	return JSON_r
 
-def startBot():
-	print("Starting bot at {} \n\n\n".format(str(datetime.datetime.now())))
+def startBot(district_id):
+	print(f"Starting bot at {str(datetime.datetime.now())} \nAimed at district_id: {district_id} \n\n\n")
 	dates_to_search = []
 	for days in range(0, 10):
 		dates_to_search.append(get_nth_day_from_today(days*7))
 	for date in dates_to_search:
-		print_response(date, get_response(date))
+		print_response(date, get_response(date, district_id))
 		sleep(1)
 	cls()
 
-while(True):
-	cls()
-	startBot()
+def initBot(district_id):
+	while(True):
+		startBot(district_id)

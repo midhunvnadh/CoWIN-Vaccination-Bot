@@ -5,6 +5,7 @@ from datetime import timedelta
 from time import sleep
 import random
 import requests
+from requests.models import ChunkedEncodingError
 
 def cls():
     if os.name == 'posix':
@@ -36,11 +37,14 @@ def print_response(search_date, response):
             sleep(2)
             exit()
     elif(response == [403]):
-        print("Sleeping for 30s")
-        for x in range(30, 0, -1):
-            print ("\033[A                             \033[A")
-            print("Sleeping for {}s".format(x))
-            sleep(1)
+        sleepNow(30)
+
+def sleepNow(s):
+    print("\n")
+    print(f"Sleeping for {s}s")
+    for x in range(s, 0, -1):
+        print("Sleeping for {}s".format(x), end = "/r")
+        sleep(1)
 
 def siren():
     os.system('play -nq -t alsa synth {} sine {}'.format(5, 440))
@@ -51,3 +55,33 @@ def getRandUserAgent():
     lines = userAgents.splitlines()
     line = random.choice(lines)
     return line
+
+def chooseState(states):
+    choices = []
+    for state in states:
+        print(f"{state['state_id']}. {state['state_name']}")
+        choices.append(state["state_id"])
+    choice = 0
+    while(int(choice) not in choices):
+        if(choice == 0):
+            choice = input("Enter your state ID: ")
+        else:
+            print("\nInvalid Choice! \n")
+            choice = input("Enter your state ID: ")
+    cls()
+    return int(choice)
+
+def chooseDistrict(districts):
+    choices = []
+    for district in districts:
+        print(f"{district['district_id']}. {district['district_name']}")
+        choices.append(district["district_id"])
+    choice = 0
+    while(int(choice) not in choices):
+        if(choice == 0):
+            choice = input("Enter your district ID: ")
+        else:
+            print("\nInvalid Choice! \n")
+            choice = input("Enter your district ID: ")
+    cls()
+    return int(choice)
