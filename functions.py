@@ -5,6 +5,7 @@ from datetime import timedelta
 from time import sleep
 import random
 import requests
+import tempfile
 
 def cls():
     if os.name == 'posix':
@@ -76,4 +77,5 @@ def get_districts(state_id):
         sleep(5)
         return get_districts(state_id)
 
-
+def get_temp_dir():
+    return tempfile.gettempdir()

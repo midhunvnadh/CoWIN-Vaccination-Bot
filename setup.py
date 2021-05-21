@@ -14,7 +14,7 @@ class Setup(QMainWindow):
         self.setWindowTitle("Co-WIN vaccination bot")
         self.hw = {"height":500, "width":400}
         self.setFixedSize(self.hw["width"], self.hw["height"])
-        self.setWindowIcon(QIcon(get_icon_loc("/tmp/bot_icon.svg")))
+        self.setWindowIcon(QIcon(get_icon_loc(f"{get_temp_dir()}/bot_icon.svg")))
 
         self.showWelcome()
         self.show()

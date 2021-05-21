@@ -1,6 +1,7 @@
+#! /bin/python3
 import json
 from pathlib import Path
-
+from functions import get_temp_dir
 
 from setup import startSetup
 from bot import startBot
@@ -21,5 +22,5 @@ def startProgram(file, createFile):
     else:
         if(createFile):
             startSetup(settings_file_name)
-        startProgram("/tmp/covid_bot_settings.json", True)
+        startProgram(f"{get_temp_dir()}/covid_bot_settings.json", True)
 startProgram("./settings.json", False)

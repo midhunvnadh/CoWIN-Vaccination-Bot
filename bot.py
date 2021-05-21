@@ -1,6 +1,5 @@
 import requests as rq
 from functions import *
-from PyQt5.QtCore import * 
 from PyQt5.QtGui import * 
 from PyQt5.QtWidgets import * 
 from PyQt5 import QtGui, QtCore
@@ -17,7 +16,7 @@ class Bot(QMainWindow):
         self.setWindowTitle("Co-WIN vaccination bot")
         self.hw = {"height":500, "width":400}
         self.setFixedSize(self.hw["width"], self.hw["height"])
-        self.setWindowIcon(QIcon(get_icon_loc("/tmp/bot_icon.svg")))
+        self.setWindowIcon(QIcon(get_icon_loc(f"{get_temp_dir()}/bot_icon.svg")))
         self.showWelcome()
         width = self.hw["width"]
 
