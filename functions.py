@@ -37,13 +37,11 @@ def print_response(search_date, response):
             sleep(2)
             exit()
     elif(response == [403]):
-        sleepNow(30)
+        sleepNow(60)
 
 def sleepNow(s):
-    print("\n")
-    print(f"Sleeping for {s}s")
     for x in range(s, 0, -1):
-        print("Sleeping for {}s".format(x), end = "/r")
+        print(f"Sleeping for {x}s ", end = "\r")
         sleep(1)
 
 def siren():

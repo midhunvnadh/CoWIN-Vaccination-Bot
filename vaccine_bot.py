@@ -18,6 +18,7 @@ def get_response(date, district_id):
     )
 	try:
 		response = sessions.json()
+		print(response)
 		JSON_r = response["centers"]
 	except:
 		JSON_r = [403]
