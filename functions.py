@@ -79,3 +79,11 @@ def get_districts(state_id):
 
 def get_temp_dir():
     return tempfile.gettempdir()
+
+def get_dist_id_from_file(filename):
+    settings_file = open(filename, "r")
+    settings_params = json.load(settings_file)
+    district_id = settings_params["district_id"]
+    return district_id
+
+    

@@ -1,13 +1,13 @@
 import requests as rq
 from functions import *
 from PyQt5.QtGui import * 
+from PyQt5.QtCore import * 
 from PyQt5.QtWidgets import * 
 from PyQt5 import QtGui, QtCore
 import sys
-import datetime
-import time
 from PyQt5 import QtTest
 from get_icon_loc import get_icon_loc
+import os
 
 class Bot(QMainWindow):
     def __init__(self):
@@ -27,7 +27,7 @@ class Bot(QMainWindow):
 
         self.centersAvailable = QLabel(f"", self)
         self.centersAvailable.show()
-        self.centersAvailable.move(0,200)
+        self.centersAvailable.move(0,150)
         self.centersAvailable.resize(width, 80)
 
         self.responseWait = QLabel(f"", self)
@@ -35,13 +35,33 @@ class Bot(QMainWindow):
         self.responseWait.move(0,300)
         self.responseWait.resize(width, 20)
 
-        self.completed = 0
-        self.progress = QProgressBar(self)
-        self.progress.setGeometry(10, 180, width-20, 15)
+
+        self.reconfigBtn = QPushButton("Reconfigure Settings", self)
+        self.reconfigBtn.setIcon(QIcon.fromTheme("view-refresh", QIcon(":/refresh.png")))
+        self.reconfigBtn.clicked.connect(lambda: self.reconfigureSettings())
+        self.reconfigBtn.move(width-200, 70)
+        self.reconfigBtn.resize(180, 40)
+        self.reconfigBtn.setCheckable(True)
 		
         self.show()
         self.windowClosed = False
 
+    def reconfigureSettings(self):
+        settings_file = f"{get_temp_dir()}/covid_bot_settings.json"
+        os.remove(settings_file)
+        msg = QMessageBox()
+        msg.setIcon(QMessageBox.Information)
+        msg.setText("The bot needs to restart")
+        msg.setInformativeText("Start the bot again to reconfigure settings.")
+        msg.setWindowTitle("Information")
+        msg.setDetailedText("The bot is restarting.")
+        msg.setStandardButtons(QMessageBox.Ok)
+        msg.buttonClicked.connect(self.msgbtn)
+        msg.exec_()
+
+    def msgbtn(i):
+        exit()
+    
     def getCalendar(self, date, district_id):
         dateQ = str(date.strftime("%d-%m-%Y"))
         sessions = requests.get(
@@ -77,14 +97,10 @@ class Bot(QMainWindow):
         self.centersAvailable.setText(f"<h3><center>{centersLength} Centers Available</center></h3>")
     def startBot(self, district_id):
         while not self.windowClosed:
-            self.completed = 0
-            for days in range(0, 10):
-                self.completed += 10
-                search_date = get_nth_day_from_today(days*7)
-                self.botSearchDate.setText(f"<h3><center>Searching for 7 days from {search_date.strftime('%d-%m-%Y')}</center></h3>")
-                self.show_response(self.getCalendar(search_date, district_id))
-                self.progress.setValue(self.completed)
-                QtTest.QTest.qWait(1000)
+            search_date = get_nth_day_from_today(0)
+            self.botSearchDate.setText(f"<h3><center>Searching centers for 7 days from Today</center></h3>")
+            self.show_response(self.getCalendar(search_date, district_id))
+            QtTest.QTest.qWait(1000)
     def showWelcome(self):
         width = self.hw["width"]
         self.intro = QLabel("<center><h1>Co-WIN slot alert bot</h1></center>", self)
@@ -92,13 +108,14 @@ class Bot(QMainWindow):
         self.intro.resize(width, 80)
         self.intro.setStyleSheet(f"width:{width}")
 
-    def closeEvent(self, *args, **kwargs):
+    def closeEvent(self,  event):
         self.windowClosed = True
-        super(QMainWindow, self).closeEvent(*args, **kwargs)
-        exit()
+        sys.stdout = sys.__stdout__
+        super().closeEvent(event)
+        sys.exit()
 
 def startBot(dist_id):
-    App = QApplication(sys.argv)
+    BotApp = QApplication([])
     setupApp = Bot()
     setupApp.startBot(dist_id)
-    sys.exit(App.exec())
+    setupApp.exec_()

@@ -11,6 +11,7 @@ class Setup(QMainWindow):
     def __init__(self):
         super().__init__()
         cls()
+        self.startBot = False
         self.setWindowTitle("Co-WIN vaccination bot")
         self.hw = {"height":500, "width":400}
         self.setFixedSize(self.hw["width"], self.hw["height"])
@@ -26,7 +27,7 @@ class Setup(QMainWindow):
         self.intro.resize(width, 80)
         self.intro.setStyleSheet(f"width:{width}")
 
-    def saveSettings(self, districts, filename):
+    def saveSettings(self, districts, filename, stateName):
         width = self.hw["width"]
         districtName = self.dist_dropdown.currentText()
         if districtName == "SELECT":
@@ -34,6 +35,8 @@ class Setup(QMainWindow):
         else:
             district_id = get_id_from_list(districts, {"name":"district_name", "id":"district_id"}, districtName)
             setting = {
+                "state_name":stateName,
+                "district_name":districtName,
                 "district_id":district_id
             }
             with open(filename, 'w') as fp:
@@ -41,15 +44,18 @@ class Setup(QMainWindow):
                 fp.write(json_data)
                 self.finished_label = QLabel("<center><h2>Settings saved.</h2></center>", self)
                 self.finished_label.move(10, 210)
-                self.finished_label.resize(width, 80)
-                self.exitBtn = QPushButton("Exit", self)
+                self.finished_label.resize(width-25, 80)
+                self.exitBtn = QPushButton("Restart", self)
                 self.exitBtn.move((width/2)-50, 300)
                 self.exitBtn.resize(100, 50)
                 self.exitBtn.setCheckable(True)
-                self.exitBtn.clicked.connect(self.close)
+                self.exitBtn.clicked.connect(self.startBotFunc)
             self.exitBtn.show()
             self.finished_label.show()
-
+    def startBotFunc(self):
+        self.startBot = True
+        self.close()
+        
     def selectDistrict(self, states, filename):
         width = self.hw["width"]
         stateName = self.dropdown.currentText()
@@ -68,7 +74,7 @@ class Setup(QMainWindow):
             self.dist_dropdown.move(10,175)
             self.dist_dropdown.resize(width-25, 40)
             self.dist_dropdown.addItems(options)
-            self.dist_dropdown.currentIndexChanged.connect(lambda: self.saveSettings(districts, filename))
+            self.dist_dropdown.currentIndexChanged.connect(lambda: self.saveSettings(districts, filename, stateName))
 
             self.dist_dropdown.show()
     
@@ -94,13 +100,15 @@ class Setup(QMainWindow):
     def setup(self, filename):
         states = sorted(get_states()["states"], key = lambda i: i["state_id"])
         self.selectState(states, filename)
-    def closeEvent(self, *args, **kwargs):
+    def closeEvent(self, event):
         self.windowClosed = True
-        super(QMainWindow, self).closeEvent(*args, **kwargs)
-        exit()
+        super().closeEvent(event)
+        if(self.startBot == False):
+            sys.exit()
+
 
 def startSetup(filename):
-    App = QApplication(sys.argv)
+    App = QApplication([])
     setupApp = Setup()
     setupApp.setup(filename)
-    App.exec()
+    App.exec_()
