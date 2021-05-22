@@ -11,11 +11,11 @@ clean:
 	rm -rf build/ dist/ *.spec release/
 install_deps:
 	pip3 install requests PyQt5 pyinstaller
-compress:
+release:
 	mkdir -p release/
 	cp $(BINARY_LOC)$(BINARY_NAME) release/$(SRC_APP_IMAGE)
 	cd release && \
 	tar -czvf $(DEST_COMPRESS).tar.gz $(SRC_APP_IMAGE) && \
 	zip $(DEST_COMPRESS).zip $(SRC_APP_IMAGE) && \
-	rm -rf $(SRC_APP_IMAGE) && \
+	mv $(SRC_APP_IMAGE) $(SRC_APP_IMAGE).exe  && \
 	cd .. 

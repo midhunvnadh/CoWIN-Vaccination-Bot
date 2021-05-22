@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: 'make install_deps && make binbot && make compress'
+      - run: 'make install_deps && make binbot && make release'
       - name: version
         run: echo "::set-output name=version::$(./bin/azblogfilter --version)"
         id: version
