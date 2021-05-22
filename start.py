@@ -2,7 +2,7 @@
 import json
 from pathlib import Path
 from functions import get_temp_dir
-from functions import get_dist_id_from_file
+from functions import get_settings
 
 from setup import startSetup
 from bot import startBot
@@ -13,7 +13,8 @@ def startProgram(file, createFile):
     settings_file_exists = Path(settings_file_name).is_file()
     if (settings_file_exists):
         try:
-            district_id = get_dist_id_from_file(file)
+            district_id = get_settings()["district_id"]
+            print(district_id)
         except:
             startSetup(settings_file_name)
             startProgram(settings_file_name, False)
@@ -27,4 +28,5 @@ def main():
     startProgram("./settings.json", False)
 
 if __name__ == "__main__":
-   main()
+    while True:
+       main()

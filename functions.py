@@ -6,6 +6,7 @@ from time import sleep
 import random
 import requests
 import tempfile
+from pathlib import Path
 
 def cls():
     if os.name == 'posix':
@@ -80,10 +81,11 @@ def get_districts(state_id):
 def get_temp_dir():
     return tempfile.gettempdir()
 
-def get_dist_id_from_file(filename):
-    settings_file = open(filename, "r")
+def get_settings():
+    settings_file = f"{get_temp_dir()}/covid_bot_settings.json"
+    settings_file_exists = Path(settings_file).is_file()
+    if(settings_file_exists is False):
+        settings_file = "./settings.json"
+    settings_file = open(settings_file, "r")
     settings_params = json.load(settings_file)
-    district_id = settings_params["district_id"]
-    return district_id
-
-    
+    return settings_params
